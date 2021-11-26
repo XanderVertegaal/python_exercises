@@ -17,10 +17,11 @@ report = f"{scorer_0} scored in the {goal_0}nd minute\n{scorer_1} scored in the 
 player = 'Oleh Protasov'
 
 first_name = player[:player.find(' ')]
+last_name = player[player.find(' ') + 1:]
 
-last_name_len = len(player[player.find(' '):-1])
+last_name_len = len(last_name)
 
-name_short = f"{first_name[0]}. {player[player.find(' ') + 1:]}"
+name_short = f"{first_name[0]}. {last_name}"
 
 chant = f"{first_name}!" + (len(first_name) - 1) * f" {first_name}!"
 
