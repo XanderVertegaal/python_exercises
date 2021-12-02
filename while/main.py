@@ -10,7 +10,7 @@ __human_name__ = "while"
 def unique_koala_facts(int):
     koala_fact_list = []
     iterations = 0
-    while (len(koala_fact_list) < int and iterations < 1000):
+    while len(koala_fact_list) < int and iterations < 1000:
         new_fact = random_koala_fact()
         if new_fact not in koala_fact_list:
             koala_fact_list.append(new_fact)
@@ -23,7 +23,7 @@ def num_joey_facts():
     joey_facts = set()
     while 10 not in seen_facts.values():
         new_fact = random_koala_fact()
-        if 'joey' in new_fact:
+        if "joey" in new_fact:
             joey_facts.add(new_fact)
 
         if new_fact in seen_facts:
@@ -34,14 +34,15 @@ def num_joey_facts():
 
 
 def koala_weight():
-    found = False
-    while found == False:
+    found = 0
+    while found == 0:
         new_fact = random_koala_fact()
-        if 'kg' in new_fact:
-            sliced = new_fact[:new_fact.find('kg')]
-            weight = sliced[sliced.rfind(' ') + 1:]
-            found = True
+        if "kg" in new_fact:
+            sliced = new_fact[: new_fact.find("kg")]
+            weight = sliced[sliced.rfind(" ") + 1:]
+            found = 1
     return int(weight)
+
 
 if __name__ == "__main__":
     print(random_koala_fact())

@@ -23,9 +23,9 @@ def most_vowels(countries):
     vowels_per_country = []
     for country in countries:
         vowels_per_country.append(
-            len([x for x in country if x.lower() in ['a', 'e', 'i', 'o', 'u']]))
+            len([x for x in country if x.lower() in ["a", "e", "i", "o", "u"]])
+        )
 
-    max_vowels = max(vowels_per_country)
     ziplist = zip(countries, vowels_per_country)
 
     def get_value(item):
@@ -43,20 +43,24 @@ def alphabet_set(countries):
     found_letters = set()
     while len(found_letters) < 26:
         for country in set(countries):
-            unique_letters = set([x.lower() for x in country if (ord(x.lower()) >= 97 and ord(x.lower()) <= 122)])
+            unique_letters = set(
+                [
+                    x.lower()
+                    for x in country
+                    if (ord(x.lower()) >= 97 and ord(x.lower()) <= 122)
+                ]
+            )
 
             if len(unique_letters.union(found_letters)) > len(found_letters):
                 found_letters = found_letters.union(unique_letters)
                 found_countries.append(country)
-    
-    return found_countries
-            
-            
-    
 
+    return found_countries
 
     # This block is only run if this file is the entrypoint; python main.py
     # It is not run if it is imported as a module: `from main import *`
+
+
 if __name__ == "__main__":
     countries = get_countries()
 
