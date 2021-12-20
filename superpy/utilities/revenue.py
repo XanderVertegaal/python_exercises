@@ -33,7 +33,6 @@ def calculate_revenue(rev_date: str = get_today(), period: int = 1):
                             expired.append(item)
                         case 'bought':
                             bought.append(item)
-
         except FileNotFoundError:
             print(f"\n [yellow]Notification:[/yellow] no report for {ind_date} found.\n")
             continue
@@ -138,6 +137,25 @@ def calculate_revenue(rev_date: str = get_today(), period: int = 1):
         expenses = sum([float(x['buying price']) for x in bought])
         profits = revenue - expenses
 
+        # Output to file
+        with open(f'./summaries/{ind_date}.csv', mode="w", newline="") as g:
+            fieldnames = [
+                "date",
+                "revenue",
+                "expenses",
+                "profits"
+            ]
+            csv_writer = csv.DictWriter(g, fieldnames=fieldnames, extrasaction="ignore")
+            csv_writer.writeheader()
+            csv_writer.writerow({
+                'date': str(ind_date),
+                'revenue': "{:.2f}".format(revenue),
+                'expenses': "{:.2f}".format(expenses),
+                'profits': "{:.2f}".format(profits)
+            })
+            
+
+        # Output to console
         table_day = Table(show_header=False)
         table_day.add_row(
             "[bold]Total revenue:[bold]",

@@ -27,6 +27,26 @@ def buy_product(
         print("\n [red]Warning:[/red] this product is currently not sold in our store. Check our product list for an overview of items we can accept (command: [italic blue]products[/italic blue]).\n")
         return
 
+    try:
+        with open(f"./inventories/{date}.csv", mode="r+", newline="") as g:
+            products = list(csv.DictReader(g))
+    except:
+        with open(f"./inventories/{date}.csv", mode="w", newline="") as h:
+            fieldnames = [
+                "id",
+                "product id",
+                "product name",
+                "amount",
+                "department",
+                "buying price",
+                "selling price",
+                "expiry date",
+            ]
+            csv_writer = csv.DictWriter(h, fieldnames=fieldnames, extrasaction="ignore")
+            h.seek(0)
+            csv_writer.writeheader()
+        products = []
+
     if price is None:
             price = item['buying price']
 
@@ -34,56 +54,53 @@ def buy_product(
         print('\n [red]Warning:[/red] this product cannot be bought right now. Please try again later.\n')
         return
 
-    with open(f"./inventories/{date}.csv", newline="", mode="r+") as g:
-        products = list(csv.DictReader(g))
+    selling_price = "{:.2f}".format(
+        round(1.10 * float(item["buying price"]), 2)
+    )
 
-        selling_price = "{:.2f}".format(
-            round(1.10 * float(item["buying price"]), 2)
+    existing = list(
+        filter(
+            lambda x: x["product name"] == item["product name"]
+
+            and x["expiry date"]
+            == str(get_expiry_date(int(item["shelf-life"])))
+
+            and "{:.2f}".format(float(x["buying price"]))
+            == "{:.2f}".format(float(price)),
+            products,
         )
+    )
 
-        existing = list(
-            filter(
-                lambda x: x["product name"] == item["product name"]
+    sold_item = {
+        "product id": item["product id"],
+        "product name": item["product name"],
+        "amount": quantity,
+        "department": item["department"],
+        "buying price": "{:.2f}".format(round((float(price)), 2)),
+        "selling price": selling_price,
+        "expiry date": get_expiry_date(int(item["shelf-life"])),
+    }
 
-                and x["expiry date"]
-                == str(get_expiry_date(int(item["shelf-life"])))
+    if len(existing) == 0:
+        products.append(sold_item)
+    else:
+        existing[0]["amount"] = str(int(existing[0]["amount"]) + quantity)
 
-                and "{:.2f}".format(float(x["buying price"]))
-                == "{:.2f}".format(float(price)),
-                products,
-            )
-        )
+    total_price = "{:.2f}".format(quantity * round((float(price)), 2))
+    print(
+        f'\n [yellow]Notification:[/yellow] the store bought [cyan]{quantity}[/cyan]x [magenta]{item["product name"]}[/magenta] for a total of [cyan]{total_price}[/cyan].\n'
+    )
 
-        sold_item = {
-            "product id": item["product id"],
-            "product name": item["product name"],
-            "amount": quantity,
-            "department": item["department"],
-            "buying price": "{:.2f}".format(round((float(price)), 2)),
-            "selling price": selling_price,
-            "expiry date": get_expiry_date(int(item["shelf-life"])),
-        }
-
-        if len(existing) == 0:
-            products.append(sold_item)
-        else:
-            existing[0]["amount"] = str(int(existing[0]["amount"]) + quantity)
-
-        total_price = "{:.2f}".format(quantity * round((float(price)), 2))
-        print(
-            f'\n [yellow]Notification:[/yellow] the store bought [cyan]{quantity}[/cyan]x [magenta]{item["product name"]}[/magenta] for a total of [cyan]{total_price}[/cyan].\n'
-        )
-
-        write_to_stock(
-            new_stock=products,
-            date=date
-        )
-        write_to_report(
-            product=sold_item,
-            status='bought',
-            amount=quantity,
-            date=date
-        )
+    write_to_stock(
+        new_stock=products,
+        date=date
+    )
+    write_to_report(
+        product=sold_item,
+        status='bought',
+        amount=quantity,
+        date=date
+    )
 
 
 def sell_product(
@@ -92,8 +109,12 @@ def sell_product(
     date: str = get_today(),
     price: float = None
 ):
-    with open(f"./inventories/{date}.csv", newline="", mode="r") as f:
-        products = list(csv.DictReader(f))
+    try:
+        with open(f"./inventories/{date}.csv", newline="", mode="r") as f:
+            products = list(csv.DictReader(f))
+    except:
+        print('\n [red]Warning:[/red] no inventory found for today. Create a new one using [italic blue]restock[/italic blue] or by ending the previous day.\n')
+        return
 
     stock = list(filter(lambda x: x["product name"] == product_name, products))
 
@@ -160,7 +181,7 @@ def sell_product(
             )
 
     print(
-        f'\n [yellow]Notification:[/yellow] the store bought [cyan]{quantity}[/cyan]x [magenta]{stock[0]["product name"]}[/magenta] for a total of [cyan]{"{:.2f}".format(round(total_price, 2))}[/cyan].\n'
+        f'\n [yellow]Notification:[/yellow] the store sold [cyan]{quantity}[/cyan]x [magenta]{stock[0]["product name"]}[/magenta] for a total of [cyan]{"{:.2f}".format(round(total_price, 2))}[/cyan].\n'
     )
     write_to_stock(products, date)
 

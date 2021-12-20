@@ -185,7 +185,7 @@ A report is a daily overview of all transactions (buying/selling) and is used to
 <br />
 
 ### **Revenue**
-An overview of revenue, expenses and profits for individual days and periods can be created by using the following command.
+An overview of revenue, expenses and profits for individual days and periods can be created by using the following command. The results are printed to the console and written per day to a csv file.
 
 * `revenue`: displays a report for a set date (default: _today_) and time period (default: single day) up to and including the set date.
 
