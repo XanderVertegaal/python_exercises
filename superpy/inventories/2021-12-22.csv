@@ -47,4 +47,4 @@ id,product id,product name,amount,department,buying price,selling price,expiry d
 46,13,leek,2,vegetables,1.10,1.21,2022-01-07
 47,12,broccoli,2,vegetables,1.00,1.10,2022-01-04
 48,10,lettuce,3,vegetables,0.50,0.55,2021-12-23
-49,14,kale,7,vegetables,2.50,2.75,2021-12-28
+49,14,kale,5,vegetables,2.50,2.75,2021-12-28
